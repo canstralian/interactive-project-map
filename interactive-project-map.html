@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Project Connections</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #1e1e1e;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+  }
+  #cy {
+    width: 100%;
+    height: 100vh;
+    display: block;
+  }
+  .tooltip {
+    position: absolute;
+    padding: 6px 10px;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+    display: none;
+    pointer-events: none;
+  }
+  #popup {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    background: #2d2d2d;
+    border: 1px solid #444;
+    padding: 20px;
+    border-radius: 8px;
+    display: none;
+    z-index: 10;
+    width: 300px;
+    color: #fff;
+  }
+  #popup h2 {
+    margin-top: 0;
+    font-size: 18px;
+  }
+  #popup button {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background: #0366D6;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+</style>
+<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+</head>
+<body>
+<div id="cy"></div>
+<div class="tooltip" id="tooltip"></div>
+<div id="popup">
+  <h2 id="popup-title"></h2>
+  <p id="popup-desc"></p>
+  <button onclick="document.getElementById('popup').style.display='none'">Close</button>
+</div>
+<script>
+var projectDetails = {
+  'CodeTuneStudio': 'AI-driven code optimization and debugging platform.',
+  'AIProgrammingCompanion': 'Converts natural language into clean Python code with explanations.',
+  'GeminiCoder': 'Generates small apps from a single prompt using Gemini API.',
+  'NoCodePlatform': 'Bubble-like no-code data management platform on Replit.',
+  'CryptoCommander': 'Security-focused encryption and credential management tool.',
+  'NetworkScanningUI': 'Wi-Fi scanning interface inspired by Nmap/Wireshark.',
+  'BugBountyRAG': 'RAG-powered agent for bug bounty and security auditing.',
+  'RansomwareDiagram': 'Visual diagrams of attack lifecycles with MITRE ATT&CK mapping.',
+  'DatasetMigration': 'Tool for moving datasets between GitHub, HF, Kaggle, and Colab.',
+  'TaskadeAIKits': 'AI-driven productivity and collaboration enhancement kits.',
+  'SwissArmyKnife': 'Modular AI hub integrating multiple automation tools.'
+};
+
+var cy = cytoscape({
+  container: document.getElementById('cy'),
+  style: [
+    {
+      selector: 'node',
+      style: {
+        'label': 'data(label)',
+        'text-valign': 'center',
+        'color': '#fff',
+        'font-size': 12,
+        'text-outline-width': 2
+      }
+    },
+    {
+      selector: 'edge',
+      style: {
+        'width': 2,
+        'line-color': '#28A745',
+        'target-arrow-color': '#28A745',
+        'target-arrow-shape': 'triangle',
+        'curve-style': 'bezier',
+        'label': 'data(label)',
+        'font-size': 10,
+        'color': '#fff'
+      }
+    }
+  ],
+  layout: { name: 'cose', padding: 20 },
+  elements: {
+    nodes: [
+      { data: { id: 'CodeTuneStudio', label: 'CodeTuneStudio', group: 'Development' } },
+      { data: { id: 'AIProgrammingCompanion', label: 'AI Programming Companion', group: 'Development' } },
+      { data: { id: 'GeminiCoder', label: 'Gemini Coder', group: 'Development' } },
+      { data: { id: 'NoCodePlatform', label: 'No-Code Platform', group: 'Development' } },
+      { data: { id: 'CryptoCommander', label: 'CryptoCommander', group: 'Security' } },
+      { data: { id: 'NetworkScanningUI', label: 'Network Scanning UI', group: 'Security' } },
+      { data: { id: 'BugBountyRAG', label: 'Bug Bounty RAG Agent', group: 'Security' } },
+      { data: { id: 'RansomwareDiagram', label: 'Ransomware Diagram', group: 'Security' } },
+      { data: { id: 'DatasetMigration', label: 'Dataset Migration Tool', group: 'Data' } },
+      { data: { id: 'TaskadeAIKits', label: 'Taskade AI Kits', group: 'Productivity' } },
+      { data: { id: 'SwissArmyKnife', label: 'Swiss Army Knife AI Platform', group: 'Productivity' } }
+    ],
+    edges: [
+      { data: { source: 'GeminiCoder', target: 'NoCodePlatform', label: 'Generate-first UI' } },
+      { data: { source: 'DatasetMigration', target: 'TaskadeAIKits', label: 'Feeds custom models' } },
+      { data: { source: 'AIProgrammingCompanion', target: 'BugBountyRAG', label: 'Shared agent framework' } },
+      { data: { source: 'CryptoCommander', target: 'NetworkScanningUI', label: 'Unified security suite' } },
+      { data: { source: 'SwissArmyKnife', target: 'GeminiCoder', label: 'Integration hub' } },
+      { data: { source: 'SwissArmyKnife', target: 'AIProgrammingCompanion', label: 'Integration hub' } },
+      { data: { source: 'SwissArmyKnife', target: 'DatasetMigration', label: 'Integration hub' } },
+      { data: { source: 'RansomwareDiagram', target: 'CodeTuneStudio', label: 'Visualization approach' } }
+    ]
+  }
+});
+
+// Color nodes by group
+cy.nodes().forEach(function(node){
+  var group = node.data('group');
+  var colors = {
+    'Development': '#0366D6',
+    'Security': '#DC3545',
+    'Data': '#FFC107',
+    'Productivity': '#28A745'
+  };
+  node.style('background-color', colors[group]);
+  node.style('text-outline-color', colors[group]);
+});
+
+// Tooltip on edges
+var tooltip = document.getElementById('tooltip');
+cy.on('mouseover', 'edge', function(evt){
+    tooltip.innerHTML = evt.target.data('label');
+    tooltip.style.display = 'block';
+});
+cy.on('mouseout', 'edge', function(){
+    tooltip.style.display = 'none';
+});
+cy.on('mousemove', function(evt){
+    tooltip.style.top = evt.originalEvent.clientY + 10 + 'px';
+    tooltip.style.left = evt.originalEvent.clientX + 10 + 'px';
+});
+
+// Popup on node click
+cy.on('tap', 'node', function(evt){
+  var node = evt.target;
+  var popup = document.getElementById('popup');
+  document.getElementById('popup-title').innerText = node.data('label');
+  document.getElementById('popup-desc').innerText = projectDetails[node.id()] || 'No description available.';
+  popup.style.display = 'block';
+});
+</script>
+</body>
+</html>
